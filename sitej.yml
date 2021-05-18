@@ -1,6 +1,25 @@
 ---
-- name: Installing the jenkins with Ansible
-  hosts: localhost
-  roles:
-    - java
-    - jenkins
+
+- name: Downloading the repo jenkins
+  get_url:
+    url: http://pkg.jenkins-ci.org/redhat/jenkins.repo
+    dest: /etc/yum.repos.d/jenkins.repo
+  become: true
+
+- name: Imporying the GPG Key
+  rpm_key:
+    state: present
+    key: https://pkg.jenkins.io/redhat/jenkins.io.key
+  become: true
+
+- name: Installing Jenkins
+  yum:
+    name: jenkins
+    state: present
+  become: true
+- name: start the jenkins server and enable on boot
+  service:
+    name: jenkins
+    state: started
+    enabled: yes
+  become: true
